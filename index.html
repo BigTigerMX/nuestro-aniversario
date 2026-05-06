@@ -171,6 +171,17 @@ section>*:not(.sc){position:relative;z-index:1}
 .rv.on,.rvL.on,.rvR.on{opacity:1;transform:translate(0)}
 .d1{transition-delay:.1s}.d2{transition-delay:.25s}.d3{transition-delay:.4s}.d4{transition-delay:.55s}
 
+/* ─── ANIMAL CROSSING PIXEL ART ─── */
+.ac-deco{pointer-events:none}
+.ac-deco svg{display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+@keyframes acF{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes acFr{0%,100%{transform:translateY(0) scaleX(-1)}50%{transform:translateY(-8px) scaleX(-1)}}
+@keyframes acFs{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-7px) rotate(3deg)}}
+.acb1{animation:acF 3.6s ease-in-out infinite}
+.acb2{animation:acF 4.2s ease-in-out 1.1s infinite}
+.acb3{animation:acFr 4.5s ease-in-out .4s both infinite}
+.acbs{animation:acFs 3.9s ease-in-out .7s infinite}
+
 /* ─── RESPONSIVE ─── */
 @media(max-width:768px){
   .story,.story.rev{grid-template-columns:1fr;gap:2.5rem;direction:ltr}
@@ -694,6 +705,149 @@ function updateCD(){
   document.getElementById('cdS').textContent=String(Math.floor(diff%60000/1000)).padStart(2,'0');
 }
 updateCD(); setInterval(updateCD,1000);
+
+// ════════════════════════════════════════════════════
+//  ANIMAL CROSSING PIXEL ART
+// ════════════════════════════════════════════════════
+(function(){
+  function px(rows,pal,sc){
+    sc=sc||4;
+    var h=rows.length,w=rows[0].length,r='';
+    for(var i=0;i<h;i++){
+      for(var j=0;j<w;j++){
+        var c=rows[i][j];
+        if(c==='.'||!pal[c]) continue;
+        r+='<rect x="'+(j*sc)+'" y="'+(i*sc)+'" width="'+sc+'" height="'+sc+'" fill="'+pal[c]+'"/>';
+      }
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="'+(w*sc)+'" height="'+(h*sc)+
+           '" style="display:block;image-rendering:pixelated;image-rendering:crisp-edges">'+r+'</svg>';
+  }
+
+  // ── Isabelle (14 wide × 16 tall, scale 5 → 70×80px) ──
+  var IS=[
+    '......rr......',
+    '.....rRRr.....',
+    '....rRBBRr....',
+    '.....rRRr.....',
+    '...YYYYYYYY...',
+    '..YYYYYYYYYY..',
+    '..YYYeYYeYYY..',
+    '..YYYYYYYYYY..',
+    '..YYYnYYnYYY..',
+    '..YYYYYYYYYY..',
+    '...YYYYYYYYYY.',
+    '....WWWWWWWW..',
+    '...gggggggggg.',
+    '..ggggGggggggg',
+    '..gggggggggggg',
+    '..............'
+  ];
+  var IP={Y:'#FFE050',R:'#EE2222',r:'#AA0000',B:'#660000',
+          e:'#1A0505',n:'#CC7060',W:'#FFFCF0',g:'#48A838',G:'#FFFFFF'};
+
+  // ── AC Leaf (12 wide × 12 tall, scale 4 → 48×48px) ──
+  var LS=[
+    '.....LL.....',
+    '....LGGL....',
+    '...LGGGGL...',
+    '..LGGGGGGL..',
+    '..LGGGGGGL..',
+    '...LGGGGL...',
+    '....LGGL....',
+    '.....LL.....',
+    '....SS......',
+    '....SS......',
+    '....SS......',
+    '............'
+  ];
+  var LP={L:'#7FCC30',G:'#55A820',S:'#C8A040'};
+
+  // ── Pixel Tulip (10 wide × 14 tall, scale 4 → 40×56px) ──
+  var TS=[
+    '....pp....',
+    '...pppp...',
+    '..pppppp..',
+    '..pPpPpp..',
+    '.pppppppp.',
+    '.ppPPPPpp.',
+    '..pppppp..',
+    '...pppp...',
+    '....gg....',
+    '...gssg...',
+    '....gg....',
+    '....gg....',
+    '...gggg...',
+    '..ggssgg..'
+  ];
+  var TP={p:'#E8709A',P:'#F5B0C8',g:'#55AA30',s:'#3D8020'};
+
+  // ── Bell coin (8 wide × 8 tall, scale 4 → 32×32px) ──
+  var BS=[
+    '..gggg..',
+    '.ggGGgg.',
+    'ggGGGGgg',
+    'ggGGGGgg',
+    'gggGGggg',
+    '.gggggg.',
+    '..gggg..',
+    '...bb...'
+  ];
+  var BP={g:'#D4A843',G:'#F5E080',b:'#9B7030'};
+
+  var isaEl  = px(IS,IP,5);
+  var leafEl = px(LS,LP,4);
+  var tulEl  = px(TS,TP,4);
+  var bellEl = px(BS,BP,4);
+
+  function add(parent,html,cls,sty){
+    if(!parent) return;
+    var d=document.createElement('div');
+    d.className='ac-deco '+(cls||'');
+    d.setAttribute('style','position:absolute;z-index:2;'+(sty||''));
+    d.innerHTML=html;
+    parent.appendChild(d);
+  }
+
+  // Hero — hojas AC en esquinas superiores
+  var hero=document.querySelector('.hero');
+  add(hero,leafEl,'acb1','top:2.2rem;left:2.5rem;opacity:.55');
+  add(hero,leafEl,'acb3','top:2.2rem;right:2.5rem;opacity:.55');
+
+  // El Inicio (1er s-cream) — Isabelle asomándose abajo a la derecha
+  var creams=document.querySelectorAll('.s-cream');
+  add(creams[0],isaEl,'acb2','bottom:1rem;right:1.5rem;opacity:.88');
+
+  // Aventuras (2do s-cream) — dos tulipanes pixel abajo a la izquierda
+  if(creams[1]){
+    var dt=document.createElement('div');
+    dt.className='ac-deco acbs';
+    dt.setAttribute('style','position:absolute;z-index:2;bottom:1rem;left:2rem;opacity:.8;display:flex;gap:6px;align-items:flex-end');
+    dt.innerHTML=tulEl+tulEl;
+    creams[1].appendChild(dt);
+  }
+
+  // Disfraces (2do s-dark) — tres bell coins arriba a la derecha
+  var darks=document.querySelectorAll('.s-dark');
+  if(darks[1]){
+    var db=document.createElement('div');
+    db.className='ac-deco acb1';
+    db.setAttribute('style','position:absolute;z-index:2;top:3rem;right:3rem;opacity:.72;display:flex;gap:12px;align-items:center');
+    db.innerHTML=bellEl+bellEl+bellEl;
+    darks[1].appendChild(db);
+  }
+
+  // Final — Isabelle abajo izquierda, hojas apiladas abajo derecha
+  var fin=document.querySelector('.final');
+  if(fin){
+    add(fin,isaEl,'acb2','bottom:2rem;left:2.5rem;opacity:.85');
+    var df=document.createElement('div');
+    df.className='ac-deco acb3';
+    df.setAttribute('style','position:absolute;z-index:2;bottom:2rem;right:2.5rem;opacity:.6;display:flex;flex-direction:column;gap:8px;align-items:flex-end');
+    df.innerHTML=leafEl+leafEl;
+    fin.appendChild(df);
+  }
+})();
 </script>
 </body>
 </html>
